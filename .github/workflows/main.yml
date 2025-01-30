@@ -26,8 +26,7 @@ jobs:
         run: make
 
       - name: Upload the compiled binary
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v2  # Correct version here
         with:
           name: compiled-binary
           path: build/app
-          
