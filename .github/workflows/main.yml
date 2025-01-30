@@ -19,14 +19,28 @@ jobs:
 
       - name: Set up Android NDK
         run: |
-          wget https://dl.google.com/android/repository/android-ndk-r26b-linux.zip
-          unzip android-ndk-r26b-linux.zip
+          # Download and unzip the Android NDK
+          wget https://dl.google.com/android/repository/android-ndk-r26b-linux-x86_64.zip
+          unzip android-ndk-r26b-linux-x86_64.zip
+          
+          # Set up NDK environment variables
           echo "NDK_HOME=$GITHUB_WORKSPACE/android-ndk-r26b" >> $GITHUB_ENV
           echo "NDK_TOOLCHAIN=$GITHUB_WORKSPACE/android-ndk-r26b/toolchains/llvm/prebuilt/linux-x86_64/bin" >> $GITHUB_ENV
+          echo "ANDROID_API_LEVEL=30" >> $GITHUB_ENV
           
+          # Add NDK toolchain to the PATH
+          echo "export PATH=$NDK_TOOLCHAIN:$PATH" >> $GITHUB_ENV
+
+      - name: Install dependencies
+        run: |
+          # Install required dependencies
+          sudo apt-get update
+          sudo apt-get install -y cmake build-essential
+
       - name: Build project
         run: |
-          export PATH=$NDK_TOOLCHAIN:$PATH
+          # Clean and build the project using the Makefile
+          make clean
           make
 
       - name: Upload binary
