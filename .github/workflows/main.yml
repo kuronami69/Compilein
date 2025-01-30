@@ -1,32 +1,32 @@
-name: Android Build
+name: Android Build Workflow
 
-on:
+on: 
   push:
     branches:
       - main
   pull_request:
+    branches:
+      - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Set up Android NDK
         run: |
-          sudo apt update
-          sudo apt install -y wget unzip
-          wget https://dl.google.com/android/repository/android-ndk-r26b-linux.zip
-          unzip android-ndk-r26b-linux.zip
-          mv android-ndk-r26b /usr/local/lib/android-ndk
+          mkdir -p $HOME/android-ndk
+          wget https://dl.google.com/android/repository/android-ndk-r26b-linux-x86_64.zip
+          unzip android-ndk-r26b-linux-x86_64.zip -d $HOME/android-ndk
+          export ANDROID_NDK_HOME=$HOME/android-ndk/android-ndk-r26b
 
-      - name: Compile the Android executable
-        run: make
+      - name: Install dependencies
+        run: sudo apt-get install -y cmake build-essential python3
 
-      - name: Upload the compiled binary
-        uses: actions/upload-artifact@v4  # Correct version here
-        with:
-          name: compiled-binary
-          path: build/app
+      - name: Build Android project
+        run: |
+          make clean
+          make
