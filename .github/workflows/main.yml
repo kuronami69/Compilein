@@ -1,32 +1,16 @@
-name: Android Build Workflow
+name: C/C++ CI
 
-on: 
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+on: [push]
 
 jobs:
-  build:
+  ubuntu-build:
     runs-on: ubuntu-latest
-    
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Android NDK
-        run: |
-          mkdir -p $HOME/android-ndk
-          wget https://dl.google.com/android/repository/android-ndk-r26b-linux-x86_64.zip
-          unzip android-ndk-r26b-linux-x86_64.zip -d $HOME/android-ndk
-          export ANDROID_NDK_HOME=$HOME/android-ndk/android-ndk-r26b
-
-      - name: Install dependencies
-        run: sudo apt-get install -y cmake build-essential python3
-
-      - name: Build Android project
-        run: |
-          make clean
-          make
+    - name: Checkout
+      uses: actions/checkout@v2.0.0
+    - name: Build project
+      uses: nicledomaS/cmake_build_action@v1.4
+      with:
+        submodule_update: ON
+        run_tests: ON
+        unit_test_build: -Dtest=ON
