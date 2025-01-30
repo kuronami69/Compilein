@@ -1,16 +1,37 @@
-name: C/C++ CI
+name: Android C++ Build
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  ubuntu-build:
+  build:
+    name: Build for Android
     runs-on: ubuntu-latest
+
     steps:
-    - name: Checkout
-      uses: actions/checkout@v2.0.0
-    - name: Build project
-      uses: nicledomaS/cmake_build_action@v1.4
-      with:
-        submodule_update: ON
-        run_tests: ON
-        unit_test_build: -Dtest=ON
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Android NDK
+        run: |
+          wget https://dl.google.com/android/repository/android-ndk-r26b-linux.zip
+          unzip android-ndk-r26b-linux.zip
+          echo "NDK_HOME=$GITHUB_WORKSPACE/android-ndk-r26b" >> $GITHUB_ENV
+          echo "NDK_TOOLCHAIN=$GITHUB_WORKSPACE/android-ndk-r26b/toolchains/llvm/prebuilt/linux-x86_64/bin" >> $GITHUB_ENV
+          
+      - name: Build project
+        run: |
+          export PATH=$NDK_TOOLCHAIN:$PATH
+          make
+
+      - name: Upload binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-app
+          path: bin/app
+          
