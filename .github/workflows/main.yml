@@ -1,0 +1,33 @@
+name: Android Build
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Android NDK
+        run: |
+          sudo apt update
+          sudo apt install -y wget unzip
+          wget https://dl.google.com/android/repository/android-ndk-r26b-linux.zip
+          unzip android-ndk-r26b-linux.zip
+          mv android-ndk-r26b /usr/local/lib/android-ndk
+
+      - name: Compile the Android executable
+        run: make
+
+      - name: Upload the compiled binary
+        uses: actions/upload-artifact@v3
+        with:
+          name: compiled-binary
+          path: build/app
+          
