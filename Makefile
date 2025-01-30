@@ -4,7 +4,7 @@ CXX := $(NDK_TOOLCHAIN)/aarch64-linux-android30-clang++
 AR  := $(NDK_TOOLCHAIN)/llvm-ar
 STRIP := $(NDK_TOOLCHAIN)/llvm-strip
 
-# Target architecture
+# Target architecture and API level
 TARGET := aarch64-linux-android
 API_LEVEL := 30
 
@@ -20,8 +20,8 @@ OBJS := $(patsubst $(SRC_DIR)/%.cpp, $(OBJ_DIR)/%.o, $(SRCS))
 TARGET_BIN := $(BIN_DIR)/app
 
 # Compiler flags
-CXXFLAGS := -std=c++17 -I$(INC_DIR) --target=$(TARGET)$(API_LEVEL) -fPIC -Wall
-LDFLAGS := -static-libstdc++
+CXXFLAGS := -std=c++17 -I$(INC_DIR) --target=$(TARGET)$(API_LEVEL) -fPIC -Wall -D__ANDROID_API__=$(API_LEVEL)
+LDFLAGS := -static-libstdc++ -landroid -llog
 
 # Default target
 all: $(TARGET_BIN)
